@@ -1,0 +1,38 @@
+model.eval()
+
+accuracy_list = []
+
+with torch.no_grad(): # 실제로 학습할 필요가 없으면 no.grad()구문을 넣어준다.
+    correct = 0
+    total = 0
+    for images, labels in test_loader: # 인덱스를 굳이 안받아도 되니깐 enumeratorr가 빠졌다.
+        images = images.to(device) #한줄로 죽 펼친 다음에 입력받아서
+        labels = labels.to(device) # 라벨도 마찬가지로
+        outputs = model(images) #모델에 넣고
+        _, predicted = torch.max(outputs.data, 1)
+        # total은 푼 문제, correct는 맞춘 문제수..이런식으로 카운팅이 들어간다
+     
+        total += labels.size(0) 
+        correct += (predicted == labels).sum().item()
+        accuracy = 100 * correct / total
+        print('Test Accuracy of the model on the 10000 test images: {} %'.format(accuracy))
+        
+        accuracy_list.append(accuracy)
+
+
+
+
+
+
+
+fig = plt.figure()
+fig.patch.set_facecolor('white')
+
+plt.plot(accuracy_list,
+         label='test accuracy',
+         c='dodgerblue')
+
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.legend(loc='lower right')
+plt.show()
